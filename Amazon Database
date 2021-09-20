@@ -1,0 +1,286 @@
+create database project;
+use project;
+
+#table creation
+create table customer(
+Customer_ID int not null,
+First_name char(30) not null,
+Last_name char(30) not null,
+Country char(20) not null,
+State char(20) not null,
+City char(20)not null,
+Street_Number varchar(40) not null,
+Pin_code int not null,
+constraint Customer_pk primary key (Customer_ID));
+
+create table cart(
+Customer_ID int not null,
+Cart_no int not null,
+Date_time_ordered datetime null,
+constraint cart_pk primary key (Customer_ID,Cart_no),
+constraint cart_fk foreign key(Customer_ID) references customer(Customer_ID));
+
+create table product(
+Product_ID int not null,
+P_name char (50) not null,
+category char (20) not null,
+Price int not null,
+constraint Product_pk primary key (Product_ID));
+
+create table Product_addition(
+Product_ID int not null,
+Customer_ID int not null,
+Cart_no int not null,
+qty int not null,
+time_stamp datetime not null,
+constraint product_addition_pk primary key (Customer_ID,Cart_no,Product_ID, time_stamp),
+Constraint product_addition_fk2 foreign key (Product_ID) references product(Product_ID),
+constraint product_addition_fk foreign key (Customer_ID,Cart_no) references Cart 
+(Customer_ID,Cart_no));
+
+create table review(
+Product_ID int not null,
+Customer_ID int not null,
+Stars int not null,
+Language char(8) not null,
+Text varchar(300) not null,
+Date date not null,
+constraint review_pk primary key(Product_ID,Customer_ID),
+constraint review_fk1 foreign key (Product_ID) references Product(Product_ID),
+constraint review_fk2 foreign key (Customer_ID) references Customer(Customer_ID));
+
+
+
+create table shipping_agency(
+shipper_id int not null,
+Name char(20) not null,
+Headquarter_country char(20) not null,
+Headquarter_city char(20) not null,
+Pincode int not null,
+Constraint shipping_agency primary key(shipper_id));
+
+create table delivery(
+Delivery_ID int not null,
+Customer_ID int not null,
+Cart_no int not null,
+Shipper_id int not null,
+Mode_of_delivery char(15) not null,
+Dispatch_date date not null,
+Date_of_delivery date null,
+Constraint delivery_pk primary key(Delivery_ID),
+constraint delivery_fk1 foreign key (Customer_ID,Cart_no) references Cart 
+(Customer_ID,Cart_no),
+Constraint delivery_fk2 foreign key (shipper_id) references shipping_agency(shipper_id));
+
+create table bank_Accounts(
+Account_number int not null,
+Bank_code int not null,
+Bank_name char(20) not null,
+Bank_country char(20) not null,
+Bank_city char(20) not null,
+Constraint bank_accounts_pk primary key(account_number, bank_code));
+
+create table payments(
+Payment_id int not null,
+customer_id int not null,
+Payment_amount int not null,
+Payment_date date not null,
+Account_number int not null,
+Bank_Code int not null,
+Constraint payments_pk primary key(payment_id),
+Constraint payments_fk1 foreign key(Account_number,bank_code) references bank_accounts(Account_number,bank_code));
+
+#insertion of data
+INSERT INTO `project`.`customer` (`Customer_ID`, `First_name`, `Last_name`, `Country`, `State`, `City`, `Street_Number`, `Pin_code`) VALUES ('1', 'Shaurya', 'Jain', 'India', 'Maharashtra', 'Mumbai', '16 Albert St.', '168001');
+INSERT INTO `project`.`customer` (`Customer_ID`, `First_name`, `Last_name`, `Country`, `State`, `City`, `Street_Number`, `Pin_code`) VALUES ('2', 'Parameswaran', 'Ajayakumar', 'Singapore', 'Singapore', 'Singapore', '14 Victoria St.', '468992');
+INSERT INTO `project`.`customer` (`Customer_ID`, `First_name`, `Last_name`, `Country`, `State`, `City`, `Street_Number`, `Pin_code`) VALUES ('3', 'Michelle ', 'Mirchandani', 'Indonesia', 'East Java', 'Jakarta', '16-B2 Dopter St.', '127004');
+INSERT INTO `project`.`customer` (`Customer_ID`, `First_name`, `Last_name`, `Country`, `State`, `City`, `Street_Number`, `Pin_code`) VALUES ('4', 'Rajvardhan', 'Bhartia', 'India', 'Maharashtra', 'Mumbai', '10 Albert St.', '168003');
+INSERT INTO `project`.`customer` (`Customer_ID`, `First_name`, `Last_name`, `Country`, `State`, `City`, `Street_Number`, `Pin_code`) VALUES ('5', 'Dwayne', 'Johnson', 'U.S.A', 'Florida', 'Miami', '60-8 Carmen Road', '363738');
+INSERT INTO `project`.`customer` (`Customer_ID`, `First_name`, `Last_name`, `Country`, `State`, `City`, `Street_Number`, `Pin_code`) VALUES ('6', 'Thomas', 'Shelby', 'U.K', 'West Midlands', 'Birmingham', 'Garrison Lane and Witton St', '718135');
+INSERT INTO `project`.`customer` (`Customer_ID`, `First_name`, `Last_name`, `Country`, `State`, `City`, `Street_Number`, `Pin_code`) VALUES ('7', 'Alfred', 'Solomons', 'U.K', 'South East', 'London', 'Epsom St', '102145');
+INSERT INTO `project`.`customer` (`Customer_ID`, `First_name`, `Last_name`, `Country`, `State`, `City`, `Street_Number`, `Pin_code`) VALUES ('8', 'Luca', 'Changretta', 'U.S.A', 'New York', 'New York City', 'Mulberry St', '131691');
+INSERT INTO `project`.`customer` (`Customer_ID`, `First_name`, `Last_name`, `Country`, `State`, `City`, `Street_Number`, `Pin_code`) VALUES ('9', 'Tatiana', 'Petrovna', 'Russia', 'Central Russia', 'Moscow', 'Square St', '385120');
+INSERT INTO `project`.`customer` (`Customer_ID`, `First_name`, `Last_name`, `Country`, `State`, `City`, `Street_Number`, `Pin_code`) VALUES ('10', 'Aaron', 'Stone', 'Germany', 'Baveria', 'Munich', 'Bismarck St', '665794');
+INSERT INTO `project`.`customer` (`Customer_ID`, `First_name`, `Last_name`, `Country`, `State`, `City`, `Street_Number`, `Pin_code`) VALUES ('11', 'Lucas', 'Moura', 'France', 'Monaco	', 'Monaco', '12 Alfredo road', '24324');
+
+INSERT INTO `project`.`cart` (`Customer_ID`, `Cart_no`, `Date_time_ordered`) VALUES ('1', '1', '2021-01-11 10:44:23');
+INSERT INTO `project`.`cart` (`Customer_ID`, `Cart_no`, `Date_time_ordered`) VALUES ('1', '2', '2021-02-15 05:44:23');
+INSERT INTO `project`.`cart` (`Customer_ID`, `Cart_no`, `Date_time_ordered`) VALUES ('2', '1', '2021-02-01 15:44:23');
+INSERT INTO `project`.`cart` (`Customer_ID`, `Cart_no`, `Date_time_ordered`) VALUES ('3', '1', '2021-02-13 23:44:23');
+INSERT INTO `project`.`cart` (`Customer_ID`, `Cart_no`, `Date_time_ordered`) VALUES ('4', '1', '2021-03-08 15:44:23');
+INSERT INTO `project`.`cart` (`Customer_ID`, `Cart_no`, `Date_time_ordered`) VALUES ('5', '1', '2021-01-25 18:44:23');
+INSERT INTO `project`.`cart` (`Customer_ID`, `Cart_no`, `Date_time_ordered`) VALUES ('5', '2', '2021-02-11 05:44:23');
+INSERT INTO `project`.`cart` (`Customer_ID`, `Cart_no`, `Date_time_ordered`) VALUES ('5', '3', '2021-03-11 17:44:23');
+INSERT INTO `project`.`cart` (`Customer_ID`, `Cart_no`, `Date_time_ordered`) VALUES ('6', '1', '2021-03-22 18:03:24');
+INSERT INTO `project`.`cart` (`Customer_ID`, `Cart_no`) VALUES ('6', '2');
+INSERT INTO `project`.`cart` (`Customer_ID`, `Cart_no`, `Date_time_ordered`) VALUES ('7', '1', '2021-03-23 19:33:24');
+INSERT INTO `project`.`cart` (`Customer_ID`, `Cart_no`, `Date_time_ordered`) VALUES ('8', '1', '2021-03-27 07:35:43');
+INSERT INTO `project`.`cart` (`Customer_ID`, `Cart_no`, `Date_time_ordered`) VALUES ('8', '2', '2021-03-29 10:44:43');
+INSERT INTO `project`.`cart` (`Customer_ID`, `Cart_no`, `Date_time_ordered`) VALUES ('9', '1', '2021-03-27 07:35:43');
+INSERT INTO `project`.`cart` (`Customer_ID`, `Cart_no`, `Date_time_ordered`) VALUES ('9', '2', '2021-03-29 17:59:43');
+INSERT INTO `project`.`cart` (`Customer_ID`, `Cart_no`) VALUES ('9', '3');
+INSERT INTO `project`.`cart` (`Customer_ID`, `Cart_no`, `Date_time_ordered`) VALUES ('10', '1', '2021-03-29 15:35:43');
+INSERT INTO `project`.`cart` (`Customer_ID`, `Cart_no`, `Date_time_ordered`) VALUES ('10', '2', '2021-03-29 19:56:23');
+INSERT INTO `project`.`cart` (`Customer_ID`, `Cart_no`) VALUES ('10', '3');
+INSERT INTO `project`.`cart` (`Customer_ID`, `Cart_no`) VALUES ('11', '1');
+
+
+INSERT INTO Product VALUES (1, "Type-C Charger", "Electronics", 25);
+INSERT INTO Product VALUES (2, "Bass-boosted Headphones", "Electronics", 250);
+INSERT INTO Product VALUES (3, "Dumbbells 10Kg", "Wellness", 80);
+INSERT INTO Product VALUES (4, "Pencil Stand", "Stationery", 13);
+INSERT INTO Product VALUES (5, "42 Inch LCD TV", "Electronics", 2500);
+
+INSERT INTO `project`.`shipping_agency` (`shipper_id`, `Name`, `Headquarter_country`, `Headquarter_city`, `Pincode`) VALUES ('1', 'Bluedart', 'Malaysia', 'Kuala Lumpur', '325234');
+INSERT INTO `project`.`shipping_agency` (`shipper_id`, `Name`, `Headquarter_country`, `Headquarter_city`, `Pincode`) VALUES ('2', 'FedEx', 'U.S.A.', 'Ohio', '12463');
+INSERT INTO `project`.`shipping_agency` (`shipper_id`, `Name`, `Headquarter_country`, `Headquarter_city`, `Pincode`) VALUES ('3', 'Ninja Van', 'Singapore', 'Singapore', '12314');
+INSERT INTO `project`.`shipping_agency` (`shipper_id`, `Name`, `Headquarter_country`, `Headquarter_city`, `Pincode`) VALUES ('4', 'Super Duper', 'Malaysia', 'Indonesia', '124436');
+
+INSERT INTO `project`.`bank_Accounts` (`Account_number`, `Bank_code`, `Bank_name`, `Bank_country`, `Bank_city`) VALUES ('101122', '101', 'OCBC', 'Singapore', 'Singapore');
+INSERT INTO `project`.`bank_Accounts` (`Account_number`, `Bank_code`, `Bank_name`, `Bank_country`, `Bank_city`) VALUES ('101122', '102', 'Bank of Kuala Lumpur', 'Malaysia', 'Kuala Lumpur');
+INSERT INTO `project`.`bank_Accounts` (`Account_number`, `Bank_code`, `Bank_name`, `Bank_country`, `Bank_city`) VALUES ('1055124', '101', 'OCBC', 'Singapore', 'Singapore');
+INSERT INTO `project`.`bank_Accounts` (`Account_number`, `Bank_code`, `Bank_name`, `Bank_country`, `Bank_city`) VALUES ('1055346', '104', 'BCA', 'Indonesia', 'Jakarta');
+
+INSERT INTO Product_addition VALUES (4, 1, 1, 2, "2021-01-11 03:44:23");
+INSERT INTO Product_addition VALUES (1, 1, 1, 1,"2021-01-11 05:44:23");
+INSERT INTO Product_addition VALUES (3, 1, 1, 1, "2021-01-11 10:44:23");
+INSERT INTO Product_addition VALUES (4, 1, 2, 3,  "2021-01-11 15:44:23");
+INSERT INTO Product_addition VALUES (3, 5, 1, 1, "2021-01-13 17:44:23");
+INSERT INTO Product_addition VALUES (3, 5, 1, 3, "2021-01-25 18:44:23");
+INSERT INTO Product_addition VALUES (5, 5, 2, 2, "2021-01-11 22:44:23");
+INSERT INTO Product_addition VALUES (1, 2, 1, 1, "2021-02-01 15:44:23");
+INSERT INTO Product_addition VALUES (4, 3, 1, 2, "2021-02-11 05:44:23");
+INSERT INTO Product_addition VALUES (4, 5, 2, 1, "2021-02-11 05:44:23");
+INSERT INTO Product_addition VALUES (5, 1, 2, 1, "2021-02-13 06:44:23");
+INSERT INTO Product_addition VALUES (2, 3, 1, 1, "2021-02-13 23:44:23");
+INSERT INTO Product_addition VALUES (1, 1, 2, 2, "2021-02-15 05:44:23");
+INSERT INTO Product_addition VALUES (1, 4, 1, 2, "2021-03-05 05:44:23");
+INSERT INTO Product_addition VALUES (2, 4, 1, 3, "2021-03-08 15:44:23");
+INSERT INTO Product_addition VALUES (1, 5, 3, 1, "2021-03-11 17:44:23");
+INSERT INTO Product_addition VALUES (5, 6, 1, 1, "2021-03-11 17:50:23");
+INSERT INTO Product_addition VALUES (1, 6, 1, 2, "2021-03-22 17:44:23");
+INSERT INTO Product_addition VALUES (3, 6, 1, 1, "2021-03-22 18:01:24");
+INSERT INTO Product_addition VALUES (2, 6, 2, 1, "2021-03-23 18:01:24");
+INSERT INTO Product_addition VALUES (5, 7, 1, 1, "2021-03-23 19:31:24");
+INSERT INTO Product_addition VALUES (3, 8, 1, 1, "2021-03-27 07:33:43");
+INSERT INTO Product_addition VALUES (3, 9, 1, 3, "2021-03-27 07:33:43");
+INSERT INTO Product_addition VALUES (1, 8, 2, 3, "2021-03-29 10:43:43");
+INSERT INTO Product_addition VALUES (2, 10, 1, 4,"2021-03-29 15:33:43");
+INSERT INTO Product_addition VALUES (1, 9, 2, 4, "2021-03-29 17:33:43");
+INSERT INTO Product_addition VALUES (4, 9, 2, 6, "2021-03-29 17:37:53");
+INSERT INTO Product_addition VALUES (5, 9, 2, 1, "2021-03-29 17:57:43");
+INSERT INTO Product_addition VALUES (3, 10, 2, 3, "2021-03-29 19:33:43");
+INSERT INTO Product_addition VALUES (2, 10, 2, 2, "2021-03-29 19:35:43");
+INSERT INTO Product_addition VALUES (5, 10, 2, 7, "2021-03-29 19:53:23");
+INSERT INTO Product_addition VALUES (1, 10, 3, 3, "2021-04-29 19:33:43");
+INSERT INTO Product_addition VALUES (2, 10, 3, 1, "2021-04-29 19:35:43");
+INSERT INTO Product_addition VALUES (5, 10, 3, 1, "2021-04-29 19:53:23");
+INSERT INTO Product_addition VALUES (4, 9, 3, 1, "2021-04-29 21:53:23");
+
+INSERT INTO Payments VALUES (1, 1, 2720, "2021-04-13", 101122, 101);
+INSERT INTO Payments VALUES (2, 2, 25, "2021-04-07", 101122, 101);
+INSERT INTO Payments VALUES (3, 3, 276, "2021-04-15",1055346, 104);
+INSERT INTO Payments VALUES (4, 4, 600, "2021-04-17", 1055124, 101);
+INSERT INTO Payments VALUES (5, 6, 2130, "2021-03-22", 101122, 101);
+INSERT INTO Payments VALUES (7, 7, 2500, "2021-03-23", 1055124, 101);
+INSERT INTO Payments VALUES (8, 8, 80, "2021-03-27", 1055346, 104);
+INSERT INTO Payments VALUES (9, 9, 240, "2021-03-27", 101122, 102);
+INSERT INTO Payments VALUES (10, 8, 75, "2021-03-29", 101122, 102);
+INSERT INTO Payments VALUES (11, 10, 1000, "2021-03-29", 1055346, 104);
+INSERT INTO Payments VALUES (12, 9, 2678, "2021-03-29", 101122, 102);
+INSERT INTO Payments VALUES (13, 10, 15415, "2021-03-29", 101122, 101);
+
+INSERT INTO `project`.`review` (`Product_ID`, `Customer_ID`, `Stars`, `Language`, `Text`, `Date`) VALUES ('1', '1', '4', 'en', 'Very convenient while travelling.', '2021-02-18');
+INSERT INTO `project`.`review` (`Product_ID`, `Customer_ID`, `Stars`, `Language`, `Text`, `Date`) VALUES ('3', '1', '1', 'en', 'Package was broken.. very disappointed.', '2021-02-19');
+INSERT INTO `project`.`review` (`Product_ID`, `Customer_ID`, `Stars`, `Language`, `Text`, `Date`) VALUES ('4', '1', '1', 'en', 'Colour not same as shown in image.  Delivery took long also.', '2021-03-26');
+INSERT INTO `project`.`review` (`Product_ID`, `Customer_ID`, `Stars`, `Language`, `Text`, `Date`) VALUES ('5', '1', '3', 'en', 'Satisfactory quality of LCD display for price.', '2021-03-24');
+INSERT INTO `project`.`review` (`Product_ID`, `Customer_ID`, `Stars`, `Language`, `Text`, `Date`) VALUES ('1', '2', '5', 'en', 'Works well for cost. Fast delivery.', '2021-03-18');
+INSERT INTO `project`.`review` (`Product_ID`, `Customer_ID`, `Stars`, `Language`, `Text`, `Date`) VALUES ('2', '3', '3', 'en', 'Bass was a bit low. Battery life is good. Delivery person was very rude.', '2021-03-25');
+INSERT INTO `project`.`review` (`Product_ID`, `Customer_ID`, `Stars`, `Language`, `Text`, `Date`) VALUES ('4', '3', '2', 'en', 'Meh. The package took very long to deliver', '2021-03-27');
+INSERT INTO `project`.`review` (`Product_ID`, `Customer_ID`, `Stars`, `Language`, `Text`, `Date`) VALUES ('1', '4', '4', 'en', 'Good Price. Worth the money!', '2021-02-24');
+INSERT INTO `project`.`review` (`Product_ID`, `Customer_ID`, `Stars`, `Language`, `Text`, `Date`) VALUES ('2', '4', '4', 'en', 'Great listening music on this. I wore it to the gym, and it was very comfortable.', '2021-02-27');
+INSERT INTO `project`.`review` (`Product_ID`, `Customer_ID`, `Stars`, `Language`, `Text`, `Date`) VALUES ('3', '5', '2', 'en', 'Sand was leaking from the dumbell – low quality', '2021-04-29');
+INSERT INTO `project`.`review` (`Product_ID`, `Customer_ID`, `Stars`, `Language`, `Text`, `Date`) VALUES ('5', '5', '5', 'en', 'THE QUALITY OF VIDEO IS AMAZING!!! Delivery was a bit late though :(', '2021-04-29');
+INSERT INTO `project`.`review` (`Product_ID`, `Customer_ID`, `Stars`, `Language`, `Text`, `Date`) VALUES ('1', '5', '5', 'en', 'Extremely fast in charging and very durable. Love it! Great Delivery!', '2021-04-29');
+INSERT INTO `project`.`review` (`Product_ID`, `Customer_ID`, `Stars`, `Language`, `Text`, `Date`) VALUES ('4', '5', '1', 'en', 'Very cheap material.Broke in one day. Unhappy with Amazon\'s service', '2021-04-29');
+INSERT INTO `project`.`review` (`Product_ID`, `Customer_ID`, `Stars`, `Language`, `Text`, `Date`) VALUES ('1', '6', '2', 'en', 'What is this??.. The entire delivery was completely covered in some type of gel', '2021-04-28');
+INSERT INTO `project`.`review` (`Product_ID`, `Customer_ID`, `Stars`, `Language`, `Text`, `Date`) VALUES ('3', '6', '2', 'en', 'What is this??.. The entire delivery was completely covered in some type of gel', '2021-04-28');
+INSERT INTO `project`.`review` (`Product_ID`, `Customer_ID`, `Stars`, `Language`, `Text`, `Date`) VALUES ('5', '6', '2', 'en', 'What is this??.. The entire delivery was completely covered in some type of gel', '2021-04-28');
+INSERT INTO `project`.`review` (`Product_ID`, `Customer_ID`, `Stars`, `Language`, `Text`, `Date`) VALUES ('5', '7', '4', 'en', 'Slight chip in the paint but functioning well', '2021-04-28');
+INSERT INTO `project`.`review` (`Product_ID`, `Customer_ID`, `Stars`, `Language`, `Text`, `Date`) VALUES ('3', '8', '5', 'hin', 'मैंने इसे बहुत पसंद किया', '2021-04-30');
+INSERT INTO `project`.`review` (`Product_ID`, `Customer_ID`, `Stars`, `Language`, `Text`, `Date`) VALUES ('1', '8', '5', 'en', 'AMAZING!!!', '2021-05-02');
+
+INSERT INTO `project`.`delivery` (`Delivery_ID`, `Customer_ID`, `Cart_no`, `Shipper_id`, `Mode_of_delivery`, `Dispatch_date`, `Date_of_delivery`) VALUES ('10001', '1', '1', '1', 'Flight', '2021-01-13', '2021-01-15');
+INSERT INTO `project`.`delivery` (`Delivery_ID`, `Customer_ID`, `Cart_no`, `Shipper_id`, `Mode_of_delivery`, `Dispatch_date`, `Date_of_delivery`) VALUES ('10002', '4', '1', '3', 'Ship', '2021-03-10', '2021-03-12');
+INSERT INTO `project`.`delivery` (`Delivery_ID`, `Customer_ID`, `Cart_no`, `Shipper_id`, `Mode_of_delivery`, `Dispatch_date`, `Date_of_delivery`) VALUES ('10003', '5', '1', '3', 'Road', '2021-01-27', '2021-01-28');
+INSERT INTO `project`.`delivery` (`Delivery_ID`, `Customer_ID`, `Cart_no`, `Shipper_id`, `Mode_of_delivery`, `Dispatch_date`, `Date_of_delivery`) VALUES ('10004', '2', '1', '1', 'Road', '2021-02-09', '2021-02-11');
+INSERT INTO `project`.`delivery` (`Delivery_ID`, `Customer_ID`, `Cart_no`, `Shipper_id`, `Mode_of_delivery`, `Dispatch_date`, `Date_of_delivery`) VALUES ('10005', '3', '1', '4', 'Flight', '2021-02-16', '2021-02-19');
+INSERT INTO `project`.`delivery` (`Delivery_ID`, `Customer_ID`, `Cart_no`, `Shipper_id`, `Mode_of_delivery`, `Dispatch_date`, `Date_of_delivery`) VALUES ('10006', '1', '2', '2', 'Ship', '2021-02-18', '2021-02-20');
+INSERT INTO `project`.`delivery` (`Delivery_ID`, `Customer_ID`, `Cart_no`, `Shipper_id`, `Mode_of_delivery`, `Dispatch_date`, `Date_of_delivery`) VALUES ('10007', '5', '2', '4', 'Flight', '2021-02-24', '2021-02-28');
+INSERT INTO `project`.`delivery` (`Delivery_ID`, `Customer_ID`, `Cart_no`, `Shipper_id`, `Mode_of_delivery`, `Dispatch_date`, `Date_of_delivery`) VALUES ('10008', '6', '1', '1', 'Flight', '2021-03-22', '2021-03-24');
+INSERT INTO `project`.`delivery` (`Delivery_ID`, `Customer_ID`, `Cart_no`, `Shipper_id`, `Mode_of_delivery`, `Dispatch_date`, `Date_of_delivery`) VALUES ('10009', '7', '1', '1', 'Flight', '2021-03-25', '2021-03-27');
+INSERT INTO `project`.`delivery` (`Delivery_ID`, `Customer_ID`, `Cart_no`, `Shipper_id`, `Mode_of_delivery`, `Dispatch_date`, `Date_of_delivery`) VALUES ('10010', '8', '1', '2', 'Ship', '2021-03-27', '2021-03-29');
+INSERT INTO `project`.`delivery` (`Delivery_ID`, `Customer_ID`, `Cart_no`, `Shipper_id`, `Mode_of_delivery`, `Dispatch_date`, `Date_of_delivery`) VALUES ('10011', '9', '1', '4', 'Ship', '2021-03-27', '2021-03-29');
+INSERT INTO `project`.`delivery` (`Delivery_ID`, `Customer_ID`, `Cart_no`, `Shipper_id`, `Mode_of_delivery`, `Dispatch_date`, `Date_of_delivery`) VALUES ('10012', '8', '2', '4', 'Ship', '2021-03-30', '2021-03-31');
+INSERT INTO `project`.`delivery` (`Delivery_ID`, `Customer_ID`, `Cart_no`, `Shipper_id`, `Mode_of_delivery`, `Dispatch_date`, `Date_of_delivery`) VALUES ('10013', '10', '1', '3', 'Road', '2021-03-29', '2021-03-31');
+INSERT INTO `project`.`delivery` (`Delivery_ID`, `Customer_ID`, `Cart_no`, `Shipper_id`, `Mode_of_delivery`, `Dispatch_date`, `Date_of_delivery`) VALUES ('10014', '9', '2', '2', 'Flight', '2021-03-30', '2021-03-31');
+INSERT INTO `project`.`delivery` (`Delivery_ID`, `Customer_ID`, `Cart_no`, `Shipper_id`, `Mode_of_delivery`, `Dispatch_date`, `Date_of_delivery`) VALUES ('10015', '10', '2', '1', 'Road', '2021-03-29', '2021-03-31');
+
+#query1
+select distinct pa1.customer_id, (select extract(hour from pa2.time_stamp) hour from product_addition pa2 where pa2.customer_id = pa1.customer_id group by extract(hour from pa2.time_stamp)  order by count(*) desc limit 1) popular_hour
+from Product_addition pa1
+where 1 = (select count(*)  from 
+(select extract(hour from pa3.time_stamp), count(*) from product_addition pa3 where pa3.customer_id = pa1.customer_id 
+group by extract(hour from pa3.time_stamp)
+having count(*) = (select count(*) impressions2 from product_addition pa4 where pa4.customer_id = pa1.customer_id group by extract(hour from pa4.time_stamp) order by count(*)  desc limit 1)) ek );
+
+#query2
+SELECT c.original_product_id, c.bought_with, count(*) as times_bought_together
+FROM (
+  SELECT a.product_id as original_product_id, b.product_id as bought_with
+  FROM Product_addition a
+  INNER join Product_addition b
+  ON a.cart_no = b.cart_no AND a.customer_id = b.customer_id AND a.product_id < b.product_id) as c
+GROUP BY c.original_product_id, c.bought_with
+ORDER BY times_bought_together Desc ;
+
+#query3
+select pa.customer_id, sum(pa.qty*p.price) - 
+coalesce((select  sum(p2.payment_amount) paid
+from payments p2
+where p2.customer_id = pa.customer_id
+group by p2.customer_id),0) Amount_due
+from product_addition pa, product p, cart c
+where pa.product_id = p.product_id
+and pa.cart_no = c.cart_no
+and pa.customer_id = c.customer_id
+and c.Date_time_ordered is not null
+group by pa.customer_id having Amount_due>0 order by Amount_due desc;
+
+#query4
+select p.category, avg(pt.Packaging_time) Average_packaging_time
+from product p, product_addition pa, (select c.customer_id, c.cart_no, DATEDIFF( d.Dispatch_date, c.Date_time_ordered) Packaging_time
+from cart c, delivery d
+where c.customer_id = d.customer_id
+and c.cart_no = d.cart_no) pt
+where pa.customer_id = pt.customer_id
+and pa.cart_no = pt.cart_no
+and pa.product_id = p.product_id
+group by p.category
+order by Average_packaging_time Desc;
+
+#query5
+select c.country, round((count(distinct concat(ca.customer_id,ca.Date_time_ordered)))/ (count(distinct c.customer_id)),2) order_per_customer
+from customer c left join cart ca
+on c.customer_id = ca.Customer_ID
+and ca.Date_time_ordered is not null
+group by c.country
+order by order_per_customer desc;
+
+#query6
+select * from review 
+where (customer_id,product_id)not in ( select distinct r.customer_id,r.product_id
+from review r, review f
+where r.customer_id = f.customer_id
+and r.text = f.text
+and r.product_id != f.product_id);
