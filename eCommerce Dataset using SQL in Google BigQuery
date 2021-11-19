@@ -1,0 +1,175 @@
+# Identify duplicate rows
+SELECT COUNT(*) as num_duplicate_rows, * FROM
+`data-to-insights.ecommerce.all_sessions_raw`
+GROUP BY
+fullVisitorId, channelGrouping, time, country, city, totalTransactionRevenue, transactions, timeOnSite, pageviews, sessionQualityDim, date, visitId, type, productRefundAmount, productQuantity, productPrice, productRevenue, productSKU, v2ProductName, v2ProductCategory, productVariant, currencyCode, itemQuantity, itemRevenue, transactionRevenue, transactionId, pageTitle, searchKeyword, pagePathLevel1, eCommerceAction_type, eCommerceAction_step, eCommerceAction_option
+HAVING num_duplicate_rows > 1;
+
+# Analyze the new 'all-sessions' table
+# schema: https://support.google.com/analytics/answer/3437719?hl=en
+SELECT
+fullVisitorId, 
+visitId, 
+date, 
+time, 
+v2ProductName, 
+productSKU, 
+type, 
+eCommerceAction_type,
+eCommerceAction_step,
+eCommerceAction_option,
+  transactionRevenue, 
+  transactionId, 
+COUNT(*) as row_count
+FROM
+`data-to-insights.ecommerce.all_sessions`
+GROUP BY 1,2,3 ,4, 5, 6, 7, 8, 9, 10,11,12
+HAVING row_count > 1 
+
+# Show total unique visitors
+SELECT
+  COUNT(*) AS product_views,
+  COUNT(DISTINCT fullVisitorId) AS unique_visitors
+FROM `data-to-insights.ecommerce.all_sessions`;
+
+# Show total unqiue visitors by referring site
+SELECT
+  COUNT(DISTINCT fullVisitorId) AS unique_visitors,
+  channelGrouping
+FROM `data-to-insights.ecommerce.all_sessions`
+GROUP BY channelGrouping
+ORDER BY channelGrouping DESC;
+
+# List all the unique product names alphabetically 
+SELECT
+  (v2ProductName) AS ProductName
+FROM `data-to-insights.ecommerce.all_sessions`
+GROUP BY ProductName
+ORDER BY ProductName
+
+# List all the unique product names alphabetically, in descending order
+SELECT
+  (v2ProductName) AS ProductName
+FROM `data-to-insights.ecommerce.all_sessions`
+GROUP BY ProductName
+ORDER BY ProductName DESC
+
+# List the five products with the most views from all visitors (include people who have viewed the same product more than once). 
+# Query counts number of times a product was viewed, puts the list in descending order, and lists the top 5 entries.
+SELECT
+  COUNT(*) AS product_views,
+  (v2ProductName) AS ProductName
+FROM `data-to-insights.ecommerce.all_sessions`
+WHERE type = 'PAGE'
+GROUP BY v2ProductName
+ORDER BY product_views DESC
+LIMIT 5;
+
+# List the five products with the most unique views from all visitors. 
+# Query counts number of times a product was viewed, puts the list in descending order, and lists the top 5 entries.
+WITH unique_product_views_by_person AS (
+SELECT
+ fullVisitorId,
+ (v2ProductName) AS ProductName
+FROM `data-to-insights.ecommerce.all_sessions`
+WHERE type = 'PAGE'
+GROUP BY fullVisitorId, v2ProductName )
+SELECT
+  COUNT(*) AS unique_view_count,
+  ProductName
+FROM unique_product_views_by_person
+GROUP BY ProductName
+ORDER BY unique_view_count DESC
+LIMIT 5;
+
+# List the five products with the most unique views from all visitors. 
+# Query counts number of times a product was viewed, puts the list in descending order, and lists the top 5 entries.
+# Include the total number of distinct products ordered and the total number of total units ordered. 
+SELECT
+  COUNT(*) AS product_views,
+  COUNT(productQuantity) AS orders,
+  SUM(productQuantity) AS quantity_product_ordered,
+  v2ProductName
+FROM `data-to-insights.ecommerce.all_sessions`
+WHERE type = 'PAGE'
+GROUP BY v2ProductName
+ORDER BY product_views DESC
+LIMIT 5;
+
+# List the five products with the most unique views from all visitors. 
+# Query counts number of times a product was viewed, puts the list in descending order, and lists the top 5 entries.
+# Include the total number of distinct products ordered and the total number of total units ordered. 
+# Include the average amount of product per order (total number of units ordered/total number of orders
+SELECT
+  COUNT(*) AS product_views,
+  COUNT(productQuantity) AS orders,
+  SUM(productQuantity) AS quantity_product_ordered,
+  SUM(productQuantity) / COUNT(productQuantity) AS avg_per_order,
+  (v2ProductName) AS ProductName
+FROM `data-to-insights.ecommerce.all_sessions`
+WHERE type = 'PAGE'
+GROUP BY v2ProductName
+ORDER BY product_views DESC
+LIMIT 5;
+
+# How many distinct times was the product part of an order (either complete or incomplete order)?
+# How many total units of the product were part of orders (either complete or incomplete)?
+# Which product had the highest conversion rate?
+# Write a conversion rate query for products with these qualities: More than 1000 units were added to a cart or ordered AND are not frisbees
+SELECT
+  COUNT(*) AS product_views,
+  COUNT(productQuantity) AS potential_orders,
+  SUM(productQuantity) AS quantity_product_added,
+  (COUNT(productQuantity)/ COUNT(*)) AS conversion_rate,
+  v2ProductName
+FROM `data-to-insights.ecommerce.all_sessions`
+WHERE LOWER(v2ProductName) NOT LIKE '%frisbee%'
+GROUP BY v2ProductName
+HAVING quantity_product_added > 1000
+ORDER BY conversion_rate DESC 
+LIMIT 10;
+
+# Write a query that shows the eCommerceAction_type and the distinct count of fullVisitorId associated with each type.
+SELECT
+  COUNT(DISTINCT fullVisitorId) AS number_of_unique_visitors,
+  eCommerceAction_type
+FROM `data-to-insights.ecommerce.all_sessions`
+GROUP BY eCommerceAction_type
+ORDER BY eCommerceAction_type;
+
+# Write a query that shows the eCommerceAction_type and the distinct count of fullVisitorId associated with each type.
+# Use a Case Statement to add a new column to your previous query to display the eCommerceAction_type label (such as “Completed purchase”).
+SELECT
+  COUNT(DISTINCT fullVisitorId) AS number_of_unique_visitors,
+  eCommerceAction_type,
+  CASE eCommerceAction_type
+  WHEN '0' THEN 'Unknown'
+  WHEN '1' THEN 'Click through of product lists'
+  WHEN '2' THEN 'Product detail views'
+  WHEN '3' THEN 'Add product(s) to cart'
+  WHEN '4' THEN 'Remove product(s) from cart'
+  WHEN '5' THEN 'Check out'
+  WHEN '6' THEN 'Completed purchase'
+  WHEN '7' THEN 'Refund of purchase'
+  WHEN '8' THEN 'Checkout options'
+  ELSE 'ERROR'
+  END AS eCommerceAction_type_label
+FROM `data-to-insights.ecommerce.all_sessions`
+GROUP BY eCommerceAction_type
+ORDER BY eCommerceAction_type;
+
+# Write a query using aggregation functions that returns the unique session IDs 
+of those visitors who have added a product to their cart but never completed checkout (abandoned their shopping cart).
+# More than 60 is high quality session
+SELECT  
+  CONCAT(fullVisitorId,CAST(visitId AS STRING)) AS unique_session_id,
+  sessionQualityDim,
+  SUM(productRevenue) AS transaction_revenue,
+  MAX(eCommerceAction_type) AS checkout_progress
+FROM `data-to-insights.ecommerce.all_sessions`
+WHERE sessionQualityDim > 60 
+GROUP BY unique_session_id, sessionQualityDim
+HAVING
+  checkout_progress = '3' # 3 = added to cart
+  AND (transaction_revenue = 0 OR transaction_revenue IS NULL)
+
